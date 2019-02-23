@@ -9,9 +9,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.io import arff
+import sklearn as sk
 
 dataset = pd.read_csv('csv_result-god-class.csv')
-
+dataset = dataset.dropna()
 #data = arff.loadarff('god-class.arff')
 #dataset = pd.DataFrame(data[0])
 
@@ -21,35 +22,45 @@ dataset = pd.read_csv('csv_result-god-class.csv')
 #dataset[xcol] = dataset[xcol].replace({'?':''}, regex=True)
 #dataset=dataset.replace({'?':''}, regex=True)
 
-x= dataset.iloc[1:420,5:65]
-y= dataset.iloc[1:420,65]
-
-
+x= dataset.iloc[1:len(dataset),5:65]
+y= dataset.iloc[1:len(dataset),66]
+###########################
+x= sk.preprocessing.scale(x)
+#try diffrent norlizationnnn 
+############################
+#### shuffling ,data imbalance
 x_train , x_test , y_train ,y_test = train_test_split(x,y,test_size=0.10, random_state=0)
-x_train.shape , y_train.shape , x_test.shape , y_train.shape
+x_train.shape , y_train.shape , x_test.shape , y_train.shape####mlhashlazmaaa
 print("hnaaaaa")
 #A sequintial Model
 model = Sequential()
 #First hidden layer
-model.add(Dense(100,activation="relu",input_dim=60,kernel_regularizer=l2(0.01)))
-model.add(Dropout(0.3, noise_shape=None,seed=None))
+model.add(Dense(256,activation="relu",input_dim=60,kernel_regularizer=l2(0.01)))
+model.add(Dropout(0.2, noise_shape=None,seed=None))
 #seonde hidden layer
-model.add(Dense(100,activation="relu",kernel_regularizer=l2(0.01)))
-model.add(Dropout(0.3, noise_shape=None,seed=None))
+model.add(Dense(256,activation="relu",kernel_regularizer=l2(0.01)))
+model.add(Dropout(0.2, noise_shape=None,seed=None))
+model.add(Dense(256,activation="relu",kernel_regularizer=l2(0.01)))
+model.add(Dropout(0.5, noise_shape=None,seed=None))
 #output layer
 model.add(Dense(1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 model.summary()
 print("modelllll")
 ###################
-model_output = model.fit(x_train,y_train,epochs=500,batch_size=20,verbose=1,validation_data=(x_test,y_test),)
+model_output = model.fit(x_train,y_train,epochs=50,batch_size=20,verbose=1,validation_data=(x_test,y_test),)
 ###################
 print('training accuracy : ', np.mean(model_output.history["acc"]))
 print('Validation accuracy : ',np.mean(model_output.history["val_acc"]))
 print("Train")
 y_pred=model.predict(x_test)
-rounded = [round(x[0])for x in y_pred]
-y_pred1 = np.array(rounded,dtype='int64')
-confusion_matrix(y_test,y_pred1)
-precision_score(y_test,y_pred1)
+
+print(y_pred)
+rounded = [round(x[0]) for x in y_pred]
+#y_pred1 = np.array(rounded,dtype='int64')
+print(y_test)
+print(rounded)
+conf_matrix = confusion_matrix(y_test,rounded)
+print(conf_matrix)
+#precision_score(y_test,rounded)
 
