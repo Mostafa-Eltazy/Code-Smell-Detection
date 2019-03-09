@@ -43,7 +43,7 @@ model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 model.summary()
 print("modelllll")
 ###################
-model_output = model.fit(x_train,y_train,epochs=50,batch_size=20,verbose=1,validation_data=(x_test,y_test),)
+model_output = model.fit(x_train,y_train,epochs=500,batch_size=20,verbose=1,validation_data=(x_test,y_test),)
 ###################
 print('training accuracy : ', np.mean(model_output.history["acc"]))
 print('Validation accuracy : ',np.mean(model_output.history["val_acc"]))
